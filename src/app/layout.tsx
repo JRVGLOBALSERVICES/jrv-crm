@@ -1,16 +1,21 @@
 import type { Metadata } from 'next'
 import './globals.css'
+import { createClient } from '@/lib/supabase/server'
+import AuthButton from './auth-button'
 
 export const metadata: Metadata = {
   title: 'Lead CRM — JRV Systems',
   description: 'Lead tracking for JRV Systems Seremban',
 }
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode
 }) {
+  const supabase = createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <html lang="en">
       <body className="min-h-screen bg-neutral-950 text-white antialiased">
@@ -27,19 +32,24 @@ export default function RootLayout({
                   <span className="text-[11px] text-neutral-500 font-medium tracking-widest uppercase">JRV SYSTEMS</span>
                 </div>
               </a>
-              <div className="flex items-center gap-3">
-                <a
-                  href="/"
-                  className="text-sm text-neutral-400 hover:text-orange-400 jrv-transition px-3 py-2 rounded-lg hover:bg-neutral-800 font-medium"
-                >
-                  Dashboard
-                </a>
-                <a
-                  href="/leads/new"
-                  className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-medium jrv-transition press-feedback"
-                >
-                  + Add Lead
-                </a>
+              <div className="flex items-center gap-2 sm:gap-3">
+                {user && (
+                  <>
+                    <a
+                      href="/"
+                      className="text-sm text-neutral-400 hover:text-orange-400 jrv-transition px-3 py-2 rounded-lg hover:bg-neutral-800 font-medium hidden sm:inline-block"
+                    >
+                      Dashboard
+                    </a>
+                    <a
+                      href="/leads/new"
+                      className="bg-orange-600 hover:bg-orange-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium jrv-transition press-feedback"
+                    >
+                      + Add
+                    </a>
+                    <AuthButton email={user.email || ''} />
+                  </>
+                )}
               </div>
             </div>
           </div>
