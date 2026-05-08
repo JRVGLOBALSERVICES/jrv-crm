@@ -168,77 +168,79 @@ export default function DashboardPage() {
       {/* Stats Cards */}
       <motion.div
         variants={itemVariants}
-        className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-7 gap-3 mb-8"
+        className="grid grid-cols-3 sm:grid-cols-3 lg:grid-cols-7 gap-2 sm:gap-3 mb-6 sm:mb-8"
       >
         {statsCards.map((card) => (
           <motion.div
             key={card.label}
             whileHover={{ scale: 1.02, borderColor: '#FF4500' }}
-            className="bg-neutral-900 rounded-xl border border-neutral-800 p-4 jrv-transition cursor-default"
+            className="bg-neutral-900 rounded-xl border border-neutral-800 p-3 sm:p-4 jrv-transition cursor-default"
           >
-            <div className="flex items-center gap-2 mb-2">
-              <div className={`w-2 h-2 rounded-full ${card.color}`} />
-              <span className="text-xs text-neutral-500 font-medium uppercase tracking-wider">{card.label}</span>
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+              <div className={`w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full ${card.color}`} />
+              <span className="text-[10px] sm:text-xs text-neutral-500 font-medium uppercase tracking-wider">{card.label}</span>
             </div>
-            <p className="text-2xl sm:text-3xl font-bold text-white tabular-nums">{card.count}</p>
+            <p className="text-lg sm:text-2xl lg:text-3xl font-bold text-white tabular-nums">{card.count}</p>
           </motion.div>
         ))}
       </motion.div>
 
       {/* Filters */}
       <motion.div variants={itemVariants} className="bg-neutral-900 rounded-xl border border-neutral-800 p-4 sm:p-5 mb-6">
-        <div className="flex flex-wrap gap-3 items-end">
-          <form onSubmit={handleSearch} className="flex-1 min-w-[220px]">
-            <label className="block text-[11px] text-neutral-500 mb-1.5 uppercase tracking-wider font-medium">Search</label>
-            <div className="flex gap-2">
+        <div className="flex flex-col sm:flex-row flex-wrap gap-2 sm:gap-3 items-stretch sm:items-end">
+          <form onSubmit={handleSearch} className="flex-1 min-w-0 sm:min-w-[200px]">
+            <label className="block text-[10px] sm:text-[11px] text-neutral-500 mb-1 uppercase tracking-wider font-medium">Search</label>
+            <div className="flex gap-1.5 sm:gap-2">
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Business name..."
-                className="w-full bg-neutral-800 border border-neutral-700 text-white px-3 py-2.5 rounded-lg text-sm jrv-transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+                className="w-full bg-neutral-800 border border-neutral-700 text-white px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm jrv-transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
               />
               <button
                 type="submit"
-                className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2.5 rounded-lg text-sm font-medium jrv-transition press-feedback"
+                className="bg-orange-600 hover:bg-orange-700 text-white px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm font-medium jrv-transition press-feedback"
               >
                 Search
               </button>
             </div>
           </form>
 
-          <div>
-            <label className="block text-[11px] text-neutral-500 mb-1.5 uppercase tracking-wider font-medium">Status</label>
-            <select
-              value={statusFilter}
-              onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
-              className="bg-neutral-800 border border-neutral-700 text-white px-3 py-2.5 rounded-lg text-sm jrv-transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500 min-w-[140px]"
-            >
-              <option value="">All Statuses</option>
-              {(Object.keys(STATUS_LABELS) as LeadStatus[]).map((s) => (
-                <option key={s} value={s}>{STATUS_LABELS[s]}</option>
-              ))}
-            </select>
-          </div>
+          <div className="grid grid-cols-2 sm:flex gap-2 sm:gap-3">
+            <div>
+              <label className="block text-[10px] sm:text-[11px] text-neutral-500 mb-1 uppercase tracking-wider font-medium">Status</label>
+              <select
+                value={statusFilter}
+                onChange={(e) => { setStatusFilter(e.target.value); setPage(1) }}
+                className="w-full bg-neutral-800 border border-neutral-700 text-white px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm jrv-transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              >
+                <option value="">All</option>
+                {(Object.keys(STATUS_LABELS) as LeadStatus[]).map((s) => (
+                  <option key={s} value={s}>{STATUS_LABELS[s]}</option>
+                ))}
+              </select>
+            </div>
 
-          <div>
-            <label className="block text-[11px] text-neutral-500 mb-1.5 uppercase tracking-wider font-medium">Sector</label>
-            <select
-              value={sectorFilter}
-              onChange={(e) => { setSectorFilter(e.target.value); setPage(1) }}
-              className="bg-neutral-800 border border-neutral-700 text-white px-3 py-2.5 rounded-lg text-sm jrv-transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500 min-w-[140px]"
-            >
-              <option value="">All Sectors</option>
-              {SECTORS.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+            <div>
+              <label className="block text-[10px] sm:text-[11px] text-neutral-500 mb-1 uppercase tracking-wider font-medium">Sector</label>
+              <select
+                value={sectorFilter}
+                onChange={(e) => { setSectorFilter(e.target.value); setPage(1) }}
+                className="w-full bg-neutral-800 border border-neutral-700 text-white px-2.5 sm:px-3 py-2 sm:py-2.5 rounded-lg text-xs sm:text-sm jrv-transition focus:border-orange-500 focus:ring-1 focus:ring-orange-500"
+              >
+                <option value="">All</option>
+                {SECTORS.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
           </div>
 
           {(search || statusFilter || sectorFilter) && (
             <button
               onClick={() => { setSearch(''); setStatusFilter(''); setSectorFilter(''); setPage(1) }}
-              className="text-orange-400 hover:text-orange-300 text-sm jrv-transition h-[42px] flex items-center press-feedback font-medium"
+              className="text-orange-400 hover:text-orange-300 text-xs sm:text-sm jrv-transition h-auto sm:h-[42px] py-2 sm:py-0 flex items-center press-feedback font-medium"
             >
               ✕ Clear
             </button>
@@ -249,26 +251,26 @@ export default function DashboardPage() {
       {/* Leads Table */}
       <motion.div variants={itemVariants} className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden">
         <div className="overflow-x-auto">
-          <table className="w-full text-sm">
+          <table className="w-full text-xs sm:text-sm">
             <thead>
               <tr className="border-b border-neutral-800">
                 {[
-                  { label: 'Business', field: 'business_name' },
-                  { label: 'Sector', field: 'sector' },
-                  { label: 'Rating / Reviews', field: null },
-                  { label: 'Web Presence', field: null },
-                  { label: 'GBP', field: null },
-                  { label: 'Address', field: null },
-                  { label: 'Status', field: 'status' },
-                  { label: 'Enriched', field: null },
-                  { label: 'Added', field: 'created_at' },
-                  { label: '', field: null },
+                  { label: 'Business', field: 'business_name', hide: '' },
+                  { label: 'Sector', field: 'sector', hide: 'hidden lg:table-cell' },
+                  { label: 'Rtg', field: null, hide: 'hidden md:table-cell' },
+                  { label: 'Web', field: null, hide: 'hidden lg:table-cell' },
+                  { label: 'GBP', field: null, hide: 'hidden lg:table-cell' },
+                  { label: 'Address', field: null, hide: 'hidden xl:table-cell' },
+                  { label: 'Status', field: 'status', hide: '' },
+                  { label: 'Enr', field: null, hide: 'hidden sm:table-cell' },
+                  { label: 'Added', field: 'created_at', hide: 'hidden md:table-cell' },
+                  { label: '', field: null, hide: '' },
                 ].map((col, i) => (
                   <th
                     key={i}
-                    className={`text-left p-3 font-medium text-neutral-500 text-xs uppercase tracking-wider ${
+                    className={`text-left p-2 sm:p-3 font-medium text-neutral-500 text-[10px] sm:text-xs uppercase tracking-wider whitespace-nowrap ${
                       col.field ? 'cursor-pointer hover:text-orange-400 jrv-transition select-none' : ''
-                    }`}
+                    } ${col.hide}`}
                     onClick={() => col.field && handleSort(col.field)}
                   >
                     {col.label}
@@ -282,15 +284,15 @@ export default function DashboardPage() {
                 Array.from({ length: 5 }).map((_, i) => (
                   <tr key={i}>
                     {Array.from({ length: 10 }).map((_, j) => (
-                      <td key={j} className="p-3">
-                        <div className="skeleton h-4 w-full max-w-[100px]" />
+                      <td key={j} className="p-2 sm:p-3">
+                        <div className="skeleton h-3 sm:h-4 w-full max-w-[80px]" />
                       </td>
                     ))}
                   </tr>
                 ))
               ) : leads.length === 0 ? (
                 <tr>
-                  <td colSpan={10} className="p-16 text-center">
+                  <td colSpan={10} className="p-8 sm:p-16 text-center">
                     <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
@@ -337,11 +339,11 @@ export default function DashboardPage() {
                     className="hover:bg-neutral-800/40 cursor-pointer jrv-transition table-row-accent group"
                     onClick={() => router.push(`/leads/${lead.id}`)}
                   >
-                    <td className="p-3 font-medium text-white group-hover:text-orange-400 jrv-transition">
+                    <td className="p-2 sm:p-3 font-medium text-white group-hover:text-orange-400 jrv-transition text-xs sm:text-sm truncate max-w-[120px] sm:max-w-none">
                       {lead.business_name}
                     </td>
-                    <td className="p-3 text-neutral-400 text-xs">{lead.sector || <span className="text-neutral-700">—</span>}</td>
-                    <td className="p-3 text-neutral-400 text-xs">
+                    <td className="p-2 sm:p-3 text-neutral-400 text-[10px] sm:text-xs hidden lg:table-cell">{lead.sector || <span className="text-neutral-700">—</span>}</td>
+                    <td className="p-2 sm:p-3 text-neutral-400 text-[10px] sm:text-xs hidden md:table-cell">
                       {lead.rating ? (
                         <span>
                           <span className="text-orange-400">★</span> {lead.rating}
@@ -353,12 +355,12 @@ export default function DashboardPage() {
                         <span className="text-neutral-700">—</span>
                       )}
                     </td>
-                    <td className="p-3 max-w-[120px]">
-                      <span className="text-neutral-400 text-xs truncate block" title={lead.current_web_presence || ''}>
+                    <td className="p-2 sm:p-3 max-w-[100px] sm:max-w-[120px] hidden lg:table-cell">
+                      <span className="text-neutral-400 text-[10px] sm:text-xs truncate block" title={lead.current_web_presence || ''}>
                         {lead.current_web_presence || <span className="text-neutral-700">—</span>}
                       </span>
                     </td>
-                    <td className="p-3 text-xs">
+                    <td className="p-2 sm:p-3 text-[10px] sm:text-xs hidden lg:table-cell">
                       {lead.gbp_rating !== null ? (
                         <span className="text-orange-400">
                           ★ {lead.gbp_rating.toFixed(1)}
@@ -370,32 +372,32 @@ export default function DashboardPage() {
                         <span className="text-neutral-700">—</span>
                       )}
                     </td>
-                    <td className="p-3 max-w-[150px]">
-                      <span className="text-neutral-400 text-xs truncate block" title={lead.address || ''}>
+                    <td className="p-2 sm:p-3 max-w-[120px] sm:max-w-[150px] hidden xl:table-cell">
+                      <span className="text-neutral-400 text-[10px] sm:text-xs truncate block" title={lead.address || ''}>
                         {lead.address || <span className="text-neutral-700">—</span>}
                       </span>
                     </td>
-                    <td className="p-3">
-                      <span className={`inline-flex px-2.5 py-1 rounded-full text-[11px] font-semibold border ${STATUS_COLORS[lead.status]}`}>
+                    <td className="p-2 sm:p-3">
+                      <span className={`inline-flex px-2 py-0.5 sm:px-2.5 sm:py-1 rounded-full text-[10px] sm:text-[11px] font-semibold border ${STATUS_COLORS[lead.status]}`}>
                         {STATUS_LABELS[lead.status]}
                       </span>
                     </td>
-                    <td className="p-3">
+                    <td className="p-2 sm:p-3 hidden sm:table-cell">
                       {lead.enrichment_complete ? (
-                        <span className="text-green-400/80 text-[11px] font-medium">Complete</span>
+                        <span className="text-green-400/80 text-[10px] sm:text-[11px] font-medium">On</span>
                       ) : lead.enriched_by ? (
-                        <span className="text-amber-400/80 text-[11px] font-medium">Partial</span>
+                        <span className="text-amber-400/80 text-[10px] sm:text-[11px] font-medium">Partial</span>
                       ) : (
-                        <span className="text-neutral-700 text-[11px]">—</span>
+                        <span className="text-neutral-700 text-[10px] sm:text-[11px]">—</span>
                       )}
                     </td>
-                    <td className="p-3 text-neutral-500 text-[11px] whitespace-nowrap tabular-nums">
+                    <td className="p-2 sm:p-3 text-neutral-500 text-[10px] sm:text-[11px] whitespace-nowrap tabular-nums hidden md:table-cell">
                       {formatDate(lead.created_at)}
                     </td>
-                    <td className="p-3">
+                    <td className="p-2 sm:p-3">
                       <button
                         onClick={(e) => { e.stopPropagation(); router.push(`/leads/${lead.id}`) }}
-                        className="text-orange-400/70 hover:text-orange-400 text-xs font-semibold jrv-transition press-feedback"
+                        className="text-orange-400/70 hover:text-orange-400 text-[10px] sm:text-xs font-semibold jrv-transition press-feedback"
                       >
                         View →
                       </button>
@@ -409,36 +411,36 @@ export default function DashboardPage() {
 
         {/* Pagination */}
         {totalPages > 1 && !loading && (
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 px-4 py-3 border-t border-neutral-800 bg-neutral-900/50">
-            <span className="text-sm text-neutral-500 tabular-nums">
-              Showing <span className="text-neutral-300 font-medium">{(page - 1) * LIMIT + 1}</span>–
-              <span className="text-neutral-300 font-medium">{Math.min(page * LIMIT, total)}</span> of{' '}
-              <span className="text-neutral-300 font-medium">{total}</span>
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-2 sm:gap-3 px-3 sm:px-4 py-2 sm:py-3 border-t border-neutral-800 bg-neutral-900/50">
+            <span className="text-xs sm:text-sm text-neutral-500 tabular-nums">
+              <span className="text-neutral-300 font-medium">{(page - 1) * LIMIT + 1}</span>–
+              <span className="text-neutral-300 font-medium">{Math.min(page * LIMIT, total)}</span>
+              <span className="hidden sm:inline"> of <span className="text-neutral-300 font-medium">{total}</span></span>
             </span>
-            <div className="flex gap-1.5">
+            <div className="flex gap-1">
               <button
                 onClick={() => setPage(p => Math.max(1, p - 1))}
                 disabled={page <= 1}
-                className="px-3 py-1.5 rounded-lg text-sm bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 jrv-transition disabled:opacity-30 disabled:cursor-not-allowed press-feedback"
+                className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 jrv-transition disabled:opacity-30 disabled:cursor-not-allowed press-feedback"
               >
-                ← Prev
+                ←
               </button>
-              {Array.from({ length: Math.min(totalPages, 7) }, (_, i) => {
+              {Array.from({ length: Math.min(totalPages, 5) }, (_, i) => {
                 let pageNum: number
-                if (totalPages <= 7) {
+                if (totalPages <= 5) {
                   pageNum = i + 1
-                } else if (page <= 4) {
+                } else if (page <= 3) {
                   pageNum = i + 1
-                } else if (page >= totalPages - 3) {
-                  pageNum = totalPages - 6 + i
+                } else if (page >= totalPages - 2) {
+                  pageNum = totalPages - 4 + i
                 } else {
-                  pageNum = page - 3 + i
+                  pageNum = page - 2 + i
                 }
                 return (
                   <button
                     key={pageNum}
                     onClick={() => setPage(pageNum)}
-                    className={`px-3 py-1.5 rounded-lg text-sm jrv-transition press-feedback ${
+                    className={`w-7 sm:w-8 h-7 sm:h-8 rounded-lg text-xs sm:text-sm jrv-transition press-feedback ${
                       page === pageNum
                         ? 'bg-orange-600 text-white font-medium'
                         : 'bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700'
@@ -451,9 +453,9 @@ export default function DashboardPage() {
               <button
                 onClick={() => setPage(p => Math.min(totalPages, p + 1))}
                 disabled={page >= totalPages}
-                className="px-3 py-1.5 rounded-lg text-sm bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 jrv-transition disabled:opacity-30 disabled:cursor-not-allowed press-feedback"
+                className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg text-xs sm:text-sm bg-neutral-800 text-neutral-400 hover:text-white hover:bg-neutral-700 jrv-transition disabled:opacity-30 disabled:cursor-not-allowed press-feedback"
               >
-                Next →
+                →
               </button>
             </div>
           </div>
