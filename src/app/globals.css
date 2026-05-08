@@ -40,3 +40,51 @@ input, textarea, select {
 input:focus, textarea:focus, select:focus {
   @apply border-orange-500 ring-1 ring-orange-500;
 }
+
+/* Skeleton loading animation */
+@keyframes shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(
+    90deg,
+    #262626 25%,
+    #333 50%,
+    #262626 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s cubic-bezier(0.23, 1, 0.32, 1) infinite;
+  border-radius: 0.5rem;
+}
+
+/* Row hover accent */
+.table-row-accent {
+  position: relative;
+}
+.table-row-accent::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  background: transparent;
+  transition: background 0.3s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.table-row-accent:hover::after {
+  background: #FF4500;
+}
+
+/* Press feedback */
+.press-feedback {
+  transition: all 0.15s cubic-bezier(0.23, 1, 0.32, 1);
+}
+.press-feedback:active {
+  transform: scale(0.97);
+}

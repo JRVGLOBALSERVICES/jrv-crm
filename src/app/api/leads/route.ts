@@ -35,9 +35,15 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 })
   }
 
+  // Get full status counts (unfiltered)
+  const { data: allLeads } = await supabase.from('leads').select('status')
+  const counts = { new: 0, contacted: 0, replied: 0, pitched: 0, closed: 0, lost: 0 }
+  ;(allLeads || []).forEach(l => { if (counts[l.status as keyof typeof counts] !== undefined) counts[l.status as keyof typeof counts]++ })
+
   return NextResponse.json({
     data: data || [],
     total: count || 0,
+    counts,
     page,
     limit,
     totalPages: Math.ceil((count || 0) / limit),
