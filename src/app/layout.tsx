@@ -13,23 +13,23 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen">
-        <nav className="bg-white border-b border-gray-200 shadow-sm">
+      <body className="min-h-screen bg-neutral-950 text-white">
+        <nav className="bg-neutral-900 border-b border-neutral-800 shadow-lg">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16 items-center">
-              <a href="/" className="text-xl font-bold text-gray-900">
+              <a href="/" className="text-xl font-bold text-orange-500 tracking-tight">
                 🧠 Lead CRM
               </a>
               <div className="flex gap-4 items-center">
                 <a
                   href="/"
-                  className="text-sm text-gray-600 hover:text-gray-900"
+                  className="text-sm text-neutral-400 hover:text-orange-400 jrv-transition"
                 >
                   Dashboard
                 </a>
                 <a
                   href="/leads/new"
-                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700"
+                  className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 jrv-transition"
                 >
                   + Add Lead
                 </a>
