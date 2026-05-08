@@ -18,12 +18,13 @@ export default function RootLayout({
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex items-center justify-between h-16">
               <a href="/" className="flex items-center gap-3 group">
-                <span className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center text-sm font-bold text-white group-hover:bg-orange-500 jrv-transition">
-                  L
+                <span className="w-8 h-8 rounded-lg bg-orange-600 flex items-center justify-center group-hover:bg-orange-500 jrv-transition">
+                  <span className="text-[10px] font-black text-white tracking-tighter leading-none">JRV</span>
                 </span>
-                <div className="hidden sm:block">
+                <div className="hidden sm:flex items-center gap-2.5">
                   <span className="text-base font-bold text-white tracking-tight">Lead CRM</span>
-                  <span className="text-[11px] text-neutral-500 ml-2 font-medium">JRV SYSTEMS</span>
+                  <span className="text-neutral-700 text-sm font-light">•</span>
+                  <span className="text-[11px] text-neutral-500 font-medium tracking-widest uppercase">JRV SYSTEMS</span>
                 </div>
               </a>
               <div className="flex items-center gap-3">
