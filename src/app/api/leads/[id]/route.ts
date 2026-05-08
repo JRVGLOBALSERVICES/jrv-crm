@@ -1,33 +1,21 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
-
-const DATA_FILE = path.join(process.cwd(), 'data', 'leads.json')
-
-function readLeads(): any[] {
-  try {
-    return JSON.parse(fs.readFileSync(DATA_FILE, 'utf-8'))
-  } catch {
-    return []
-  }
-}
-
-function writeLeads(leads: any[]) {
-  const dir = path.dirname(DATA_FILE)
-  if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-  fs.writeFileSync(DATA_FILE, JSON.stringify(leads, null, 2))
-}
+import { supabase } from '@/lib/supabase'
 
 export async function GET(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
-  const leads = readLeads()
-  const lead = leads.find((l) => l.id === params.id)
-  if (!lead) {
+  const { data, error } = await supabase
+    .from('leads')
+    .select('*')
+    .eq('id', params.id)
+    .single()
+
+  if (error || !data) {
     return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
   }
-  return NextResponse.json(lead)
+
+  return NextResponse.json(data)
 }
 
 export async function PATCH(
@@ -36,24 +24,36 @@ export async function PATCH(
 ) {
   try {
     const body = await request.json()
-    const leads = readLeads()
-    const index = leads.findIndex((l: any) => l.id === params.id)
 
-    if (index === -1) {
-      return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+    // Build update object
+    const updates: Record<string, any> = { ...body, updated_at: new Date().toISOString() }
+
+    // Get current lead to check timestamps
+    const { data: current } = await supabase
+      .from('leads')
+      .select('contacted_at, replied_at, pitched_at, closed_at')
+      .eq('id', params.id)
+      .single()
+
+    if (current) {
+      if (body.status === 'contacted' && !current.contacted_at) updates.contacted_at = new Date().toISOString()
+      if (body.status === 'replied' && !current.replied_at) updates.replied_at = new Date().toISOString()
+      if (body.status === 'pitched' && !current.pitched_at) updates.pitched_at = new Date().toISOString()
+      if (body.status === 'closed' && !current.closed_at) updates.closed_at = new Date().toISOString()
     }
 
-    // Auto-set timestamp fields based on status
-    const updates: Record<string, any> = { ...body, updated_at: new Date().toISOString() }
-    if (body.status === 'contacted' && !leads[index].contacted_at) updates.contacted_at = new Date().toISOString()
-    if (body.status === 'replied' && !leads[index].replied_at) updates.replied_at = new Date().toISOString()
-    if (body.status === 'pitched' && !leads[index].pitched_at) updates.pitched_at = new Date().toISOString()
-    if (body.status === 'closed' && !leads[index].closed_at) updates.closed_at = new Date().toISOString()
+    const { data, error } = await supabase
+      .from('leads')
+      .update(updates)
+      .eq('id', params.id)
+      .select()
+      .single()
 
-    leads[index] = { ...leads[index], ...updates }
-    writeLeads(leads)
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
 
-    return NextResponse.json(leads[index])
+    return NextResponse.json(data)
   } catch {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
@@ -63,15 +63,14 @@ export async function DELETE(
   _request: Request,
   { params }: { params: { id: string } }
 ) {
-  let leads = readLeads()
-  const index = leads.findIndex((l: any) => l.id === params.id)
+  const { error } = await supabase
+    .from('leads')
+    .delete()
+    .eq('id', params.id)
 
-  if (index === -1) {
-    return NextResponse.json({ error: 'Lead not found' }, { status: 404 })
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
   }
-
-  leads.splice(index, 1)
-  writeLeads(leads)
 
   return NextResponse.json({ success: true })
 }

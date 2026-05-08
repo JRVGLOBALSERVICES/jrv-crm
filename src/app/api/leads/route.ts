@@ -1,53 +1,24 @@
 import { NextResponse } from 'next/server'
-import fs from 'fs'
-import path from 'path'
-
-const DATA_DIR = path.join(process.cwd(), 'data')
-const DATA_FILE = path.join(DATA_DIR, 'leads.json')
-
-function ensureDataDir() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true })
-  }
-  if (!fs.existsSync(DATA_FILE)) {
-    fs.writeFileSync(DATA_FILE, JSON.stringify([], null, 2))
-  }
-}
-
-function readLeads(): any[] {
-  ensureDataDir()
-  const raw = fs.readFileSync(DATA_FILE, 'utf-8')
-  return JSON.parse(raw)
-}
-
-function writeLeads(leads: any[]) {
-  ensureDataDir()
-  fs.writeFileSync(DATA_FILE, JSON.stringify(leads, null, 2))
-}
-
-function generateId(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, (c) => {
-    const r = (Math.random() * 16) | 0
-    return (c === 'x' ? r : (r & 0x3) | 0x8).toString(16)
-  })
-}
+import { supabase } from '@/lib/supabase'
 
 export async function GET() {
-  const leads = readLeads()
-  // Sort by created_at desc
-  leads.sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
-  return NextResponse.json(leads)
+  const { data, error } = await supabase
+    .from('leads')
+    .select('*')
+    .order('created_at', { ascending: false })
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 })
+  }
+
+  return NextResponse.json(data || [])
 }
 
 export async function POST(request: Request) {
   try {
     const body = await request.json()
-    const leads = readLeads()
 
     const newLead = {
-      id: generateId(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
       business_name: body.business_name,
       sector: body.sector || null,
       rating: body.rating || null,
@@ -59,18 +30,21 @@ export async function POST(request: Request) {
       phone: body.phone || null,
       notes: body.notes || null,
       status: 'new',
-      contacted_at: null,
-      replied_at: null,
-      pitched_at: null,
-      closed_at: null,
       assigned_to: 'Vir',
     }
 
-    leads.push(newLead)
-    writeLeads(leads)
+    const { data, error } = await supabase
+      .from('leads')
+      .insert(newLead)
+      .select()
+      .single()
 
-    return NextResponse.json(newLead, { status: 201 })
-  } catch {
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 })
+    }
+
+    return NextResponse.json(data, { status: 201 })
+  } catch (e: any) {
     return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
   }
 }

@@ -116,11 +116,17 @@ export default function ProposalPage() {
         <div className="flex items-center justify-between mb-6">
           <h1 className="text-2xl font-bold">Proposal: {lead.business_name}</h1>
           <span className="text-xs text-neutral-500">
-            {JSON.parse(lead.notes || '{}').proposal_generated_at
-              ? new Date(JSON.parse(lead.notes).proposal_generated_at).toLocaleDateString('en-MY', {
-                  year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
-                })
-              : ''}
+            {(() => {
+              try {
+                const parsed = JSON.parse(lead.notes || '{}')
+                if (parsed.proposal_generated_at) {
+                  return new Date(parsed.proposal_generated_at).toLocaleDateString('en-MY', {
+                    year: 'numeric', month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit'
+                  })
+                }
+              } catch {}
+              return ''
+            })()}
           </span>
         </div>
 
