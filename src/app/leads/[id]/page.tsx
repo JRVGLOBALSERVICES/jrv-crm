@@ -69,6 +69,12 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
           </p>
         </div>
         <div className="flex gap-2">
+          <a
+            href={`/leads/${params.id}/proposal`}
+            className="bg-orange-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-orange-700 transition"
+          >
+            📋 Proposal
+          </a>
           <button
             onClick={handleDelete}
             disabled={deleting}
@@ -134,6 +140,30 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
                   {lead.google_maps_url}
                 </a>
               </p>
+            </div>
+          )}
+          {(lead as any).address && (
+            <div className="col-span-2">
+              <label className="text-xs text-gray-500 uppercase">Address</label>
+              <p className="mt-1 text-sm">{(lead as any).address}</p>
+            </div>
+          )}
+          {(lead as any).hours && (
+            <div>
+              <label className="text-xs text-gray-500 uppercase">Hours</label>
+              <p className="mt-1 text-sm">{(lead as any).hours}</p>
+            </div>
+          )}
+          {(lead as any).gbp_rating && (
+            <div>
+              <label className="text-xs text-gray-500 uppercase">GBP Rating</label>
+              <p className="mt-1">{'★'.repeat(Math.round((lead as any).gbp_rating))} ({(lead as any).gbp_rating})</p>
+            </div>
+          )}
+          {(lead as any).enriched_by && (
+            <div>
+              <label className="text-xs text-gray-500 uppercase">Enriched By</label>
+              <p className="mt-1 text-sm capitalize">{(lead as any).enriched_by}</p>
             </div>
           )}
         </div>
