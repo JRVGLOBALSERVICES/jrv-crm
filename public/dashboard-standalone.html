@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lead CRM — JRV Systems</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 min-h-screen">
+  <nav class="bg-white border-b border-gray-200 shadow-sm">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between h-16 items-center">
+        <a href="/" class="text-xl font-bold text-gray-900">🧠 Lead CRM</a>
+        <div class="flex gap-4 items-center">
+          <a href="/" class="text-sm text-gray-600 hover:text-gray-900">Dashboard</a>
+          <a href="/leads/new" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-blue-700">+ Add Lead</a>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <h1 class="text-2xl font-bold mb-6">Dashboard</h1>
+    <div id="stats" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-7 gap-4 mb-8"></div>
+    <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+      <div class="p-4 border-b border-gray-200">
+        <h2 class="text-lg font-semibold">All Leads</h2>
+      </div>
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-gray-50">
+            <tr>
+              <th class="text-left p-3 font-medium text-gray-600">Business</th>
+              <th class="text-left p-3 font-medium text-gray-600">Sector</th>
+              <th class="text-left p-3 font-medium text-gray-600">Rating</th>
+              <th class="text-left p-3 font-medium text-gray-600">Status</th>
+              <th class="text-left p-3 font-medium text-gray-600">Added</th>
+              <th class="text-left p-3 font-medium text-gray-600">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="leads-table" class="divide-y divide-gray-200"></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const STATUS_LABELS = { new: 'New', contacted: 'Contacted', replied: 'Replied', pitched: 'Pitched', closed: 'Closed', lost: 'Lost' };
+    const STATUS_COLORS = { new: 'bg-blue-100 text-blue-800', contacted: 'bg-yellow-100 text-yellow-800', replied: 'bg-purple-100 text-purple-800', pitched: 'bg-indigo-100 text-indigo-800', closed: 'bg-green-100 text-green-800', lost: 'bg-red-100 text-red-800' };
+
+    async function loadLeads() {
+      const res = await fetch('/api/leads');
+      const leads = await res.json();
+      const stats = { total: leads.length };
+      'new,contacted,replied,pitched,closed,lost'.split(',').forEach(s => stats[s] = leads.filter(l => l.status === s).length);
+
+      const statCards = document.getElementById('stats');
+      statCards.innerHTML = '';
+      const statData = [
+        { label: 'Total', count: stats.total, color: 'bg-gray-600' },
+        { label: 'New', count: stats.new, color: 'bg-blue-500' },
+        { label: 'Contacted', count: stats.contacted, color: 'bg-yellow-500' },
+        { label: 'Replied', count: stats.replied, color: 'bg-purple-500' },
+        { label: 'Pitched', count: stats.pitched, color: 'bg-indigo-500' },
+        { label: 'Closed', count: stats.closed, color: 'bg-green-500' },
+        { label: 'Lost', count: stats.lost, color: 'bg-red-500' },
+      ];
+      statData.forEach(card => {
+        statCards.innerHTML += `
+          <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4">
+            <div class="flex items-center gap-3">
+              <div class="w-3 h-3 rounded-full ${card.color}"></div>
+              <span class="text-sm text-gray-600">${card.label}</span>
+            </div>
+            <p class="text-2xl font-bold mt-2">${card.count}</p>
+          </div>
+        `;
+      });
+
+      const tbody = document.getElementById('leads-table');
+      if (leads.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-400">No leads yet. Add your first lead to get started.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = leads.map(l => `
+        <tr class="hover:bg-gray-50">
+          <td class="p-3 font-medium">${l.business_name}</td>
+          <td class="p-3 text-gray-600">${l.sector || '—'}</td>
+          <td class="p-3"><span class="text-yellow-500">★</span> ${l.rating || '—'}${l.review_count ? ` (${l.review_count})` : ''}</td>
+          <td class="p-3"><span class="inline-flex px-2 py-1 rounded-full text-xs font-medium ${STATUS_COLORS[l.status]}">${STATUS_LABELS[l.status]}</span></td>
+          <td class="p-3 text-gray-500 text-xs">${new Date(l.created_at).toLocaleDateString('en-MY', { day: 'numeric', month: 'short', year: 'numeric' })}</td>
+          <td class="p-3"><a href="/leads/${l.id}" class="text-blue-600 hover:text-blue-800 text-sm">View</a></td>
+        </tr>
+      `).join('');
+    }
+
+    
+    const EMBEDDED_LEADS = [
+  {
+    "id": "00000000-0000-0000-0000-000000000001",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Restoran Bigreen Leaf",
+    "sector": "F&B (South Indian / Banana Leaf)",
+    "rating": "4.0 Stars",
+    "review_count": 759,
+    "current_web_presence": "No website \u2014 only Google Maps listing and word of mouth",
+    "why_they_need_website": "759 reviews showing massive demand. No online menu, no delivery ordering, no branding. Losing customers to competitors with proper web presence.",
+    "recommended_domain": "bigreenleaf.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=bigreenleaf",
+    "phone": null,
+    "status": "new",
+    "notes": "Verified 759 reviews on Google Maps. No website button visible in Google profile. Heavy F&B traffic sector \u2014 customers check menu online before visiting.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000002",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Kedai Kopi Hainan Seremban",
+    "sector": "F&B (Hainanese Coffee Shop)",
+    "rating": "4.1 Stars",
+    "review_count": 322,
+    "current_web_presence": "No website \u2014 Facebook page exists but no dedicated site",
+    "why_they_need_website": "322 reviews with no home page. Heritage brand needs digital preservation. Tourists and locals search for Hainanese coffee online.",
+    "recommended_domain": "kedaikopihainan.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=kedaikopihainan",
+    "phone": null,
+    "status": "new",
+    "notes": "322 Google reviews. Cultural/heritage F&B \u2014 strong draw for tourists and foodies. No website despite being a landmark in Seremban.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000003",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Kow Kee Laksa",
+    "sector": "F&B (Laksa / Hawker Specialty)",
+    "rating": "4.5 Stars",
+    "review_count": 250,
+    "current_web_presence": "Zero digital footprint \u2014 no website, no social media, no delivery platforms",
+    "why_they_need_website": "Zero online presence despite 250+ reviews. Hawker-to-web pipeline can turn a local gem into a destination. Online ordering alone would capture untapped revenue.",
+    "recommended_domain": "kowkeelaksa.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=kowkeelaksa",
+    "phone": null,
+    "status": "new",
+    "notes": "Approx 250 reviews. Complete digital void \u2014 no website, no Facebook, no delivery. Classic case of a quality product invisible online.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000004",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Onn Kee Satay",
+    "sector": "F&B (Satay Stall)",
+    "rating": "4.3 Stars",
+    "review_count": 200,
+    "current_web_presence": "Foodpanda only \u2014 no own website or direct ordering channel",
+    "why_they_need_website": "Relies entirely on Foodpanda for digital orders (30% commission). Own website with direct ordering = higher margins and customer ownership.",
+    "recommended_domain": "onnkeesatay.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=onnkeesatay",
+    "phone": null,
+    "status": "new",
+    "notes": "~200 reviews. Trapped on Foodpanda. Serious need to escape third-party commissions with a direct ordering website.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000005",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Restoran Sin Yit Sing",
+    "sector": "F&B (Chinese Seafood)",
+    "rating": "4.2 Stars",
+    "review_count": 481,
+    "current_web_presence": "No website \u2014 no online presence beyond Google Maps",
+    "why_they_need_website": "481 reviews = huge loyal base. No website means no reservation system, no event booking, no menu showcase. Losing corporate event bookings.",
+    "recommended_domain": "sinyitsing.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=sinyitsing",
+    "phone": null,
+    "status": "new",
+    "notes": "481 Google reviews. Chinese seafood \u2014 a high-ticket F&B category perfect for event/corporate bookings through a website.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000006",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Hin Loong Ipoh White Coffee",
+    "sector": "F&B (Coffee Shop / Kopitiam)",
+    "rating": "4.8 Stars",
+    "review_count": 500,
+    "current_web_presence": "Facebook + delivery platforms only \u2014 no proper website",
+    "why_they_need_website": "500+ reviews with 4.8 stars = Seremban legend. No website means no brand hub, no catering inquiries, no online merchandise. Brand dilution.",
+    "recommended_domain": "hinloongcoffee.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=hinloong",
+    "phone": null,
+    "status": "new",
+    "notes": "500+ reviews, 4.8 stars. Iconic kopitiam with massive brand potential. Website could drive catering, merchandise, and franchise interest.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000007",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Wah Tung Biscuit Confectionery",
+    "sector": "F&B / Retail (Traditional Bakery)",
+    "rating": "4.3 Stars",
+    "review_count": 150,
+    "current_web_presence": "Facebook only \u2014 no e-commerce or online catalog",
+    "why_they_need_website": "Traditional bakery with 150+ reviews. Perfect for e-commerce \u2014 cookies, biscuits, gift boxes shipped nationwide. No online store = leaving money on table.",
+    "recommended_domain": "wahtung.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=wahtung",
+    "phone": null,
+    "status": "new",
+    "notes": "~150 reviews. Heritage bakery with huge gifting/e-commerce potential. No online ordering despite being a beloved local brand.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000008",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "CS Brothers Car Beauty Centre",
+    "sector": "Auto Services (Car Detailing & Workshop)",
+    "rating": "4.4 Stars",
+    "review_count": 180,
+    "current_web_presence": "Phone-only \u2014 no website, no online booking, no social media presence",
+    "why_they_need_website": "180 reviews with phone-only contact. Car detailing customers search online for pricing, portfolio (before/after photos), and booking. No website = invisible to new car owners.",
+    "recommended_domain": "csbrothersauto.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=csbrothers",
+    "phone": null,
+    "status": "new",
+    "notes": "~180 reviews. Auto detailing \u2014 high-ticket service. Customers need to see portfolio photos and pricing before booking. No website = lost leads.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000009",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "The UNDERATED Barbershop",
+    "sector": "Health & Beauty (Barbershop)",
+    "rating": "5.0 Stars",
+    "review_count": 254,
+    "current_web_presence": "Booking platforms only \u2014 Fresha/Booksy but no own-brand website",
+    "why_they_need_website": "254 reviews at PERFECT 5.0 \u2014 peak reputation. Relies on third-party booking platforms (paying commissions). Own site with direct booking = brand control + higher margin.",
+    "recommended_domain": "underratedbarbershop.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=underratedbarbershop",
+    "phone": null,
+    "status": "new",
+    "notes": "254 reviews, 5.0 stars. Premium barbershop trapped on booking aggregators. Perfect candidate for a JRV Systems booking website.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "00000000-0000-0000-0000-000000000010",
+    "created_at": "2026-05-01T10:00:00.000Z",
+    "updated_at": "2026-05-01T10:00:00.000Z",
+    "business_name": "Petto Eki",
+    "sector": "Retail (Pet Shop & Grooming)",
+    "rating": "5.0 Stars",
+    "review_count": 170,
+    "current_web_presence": "Social media only \u2014 Instagram/Facebook but no e-commerce website",
+    "why_they_need_website": "170 reviews at 5.0 stars. Pet owners actively search for grooming booking and pet product e-commerce. No website = zero online revenue from a booming pet economy.",
+    "recommended_domain": "pettoeki.com.my",
+    "google_maps_url": "https://maps.google.com/?cid=pettoeki",
+    "phone": null,
+    "status": "new",
+    "notes": "170+ reviews, 5.0 stars. Pet services sector is booming in Malaysia. E-commerce for pet products + online grooming booking would unlock significant revenue.",
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "8af729c5-afe9-477a-a23e-81affadc7b43",
+    "created_at": "2026-05-01T07:41:41.861Z",
+    "updated_at": "2026-05-01T07:41:41.861Z",
+    "business_name": "Test Ping",
+    "sector": null,
+    "rating": null,
+    "review_count": null,
+    "current_web_presence": null,
+    "why_they_need_website": null,
+    "recommended_domain": null,
+    "google_maps_url": null,
+    "phone": null,
+    "status": "new",
+    "notes": null,
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  },
+  {
+    "id": "1bc49d0d-9ee7-47fc-a1c0-b4f0071fc09d",
+    "created_at": "2026-05-01T07:44:15.064081Z",
+    "updated_at": "2026-05-01T07:44:15.064081Z",
+    "business_name": "Test Via Python",
+    "sector": null,
+    "rating": null,
+    "review_count": null,
+    "current_web_presence": null,
+    "why_they_need_website": null,
+    "recommended_domain": null,
+    "google_maps_url": null,
+    "phone": null,
+    "status": "new",
+    "notes": null,
+    "contacted_at": null,
+    "replied_at": null,
+    "pitched_at": null,
+    "closed_at": null,
+    "assigned_to": "Vir"
+  }
+];
+    const STATUS_LABELS = { new: 'New', contacted: 'Contacted', replied: 'Replied', pitched: 'Pitched', closed: 'Closed', lost: 'Lost' };
+    const STATUS_COLORS = { new: 'bg-blue-100 text-blue-800', contacted: 'bg-yellow-100 text-yellow-800', replied: 'bg-purple-100 text-purple-800', pitched: 'bg-indigo-100 text-indigo-800', closed: 'bg-green-100 text-green-800', lost: 'bg-red-100 text-red-800' };
+    (function() {
+      var leads = EMBEDDED_LEADS.sort(function(a,b){return new Date(b.created_at)-new Date(a.created_at)});
+      var stats = {total: leads.length};
+      'new,contacted,replied,pitched,closed,lost'.split(',').forEach(function(s){stats[s]=leads.filter(function(l){return l.status===s}).length});
+      var statCards = document.getElementById('stats');
+      if (statCards) {
+        statCards.innerHTML = '';
+        [{l:'Total',c:stats.total,cl:'bg-gray-600'},{l:'New',c:stats.new,cl:'bg-blue-500'},{l:'Contacted',c:stats.contacted,cl:'bg-yellow-500'},{l:'Replied',c:stats.replied,cl:'bg-purple-500'},{l:'Pitched',c:stats.pitched,cl:'bg-indigo-500'},{l:'Closed',c:stats.closed,cl:'bg-green-500'},{l:'Lost',c:stats.lost,cl:'bg-red-500'}].forEach(function(card){
+          statCards.innerHTML += '<div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4"><div class="flex items-center gap-3"><div class="w-3 h-3 rounded-full ' + card.cl + '"></div><span class="text-sm text-gray-600">' + card.l + '</span></div><p class="text-2xl font-bold mt-2">' + card.c + '</p></div>';
+        });
+      }
+      var tbody = document.getElementById('leads-table');
+      if (tbody) {
+        if (leads.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="p-8 text-center text-gray-400">No leads yet.</td></tr>';
+        } else {
+          tbody.innerHTML = leads.map(function(l){
+            return '<tr class="hover:bg-gray-50"><td class="p-3 font-medium">' + (l.business_name||'') + '</td><td class="p-3 text-gray-600">' + (l.sector||'\u2014') + '</td><td class="p-3"><span class="text-yellow-500">\u2606</span> ' + (l.rating||'\u2014') + (l.review_count ? ' (' + l.review_count + ')' : '') + '</td><td class="p-3"><span class="inline-flex px-2 py-1 rounded-full text-xs font-medium ' + (STATUS_COLORS[l.status]||'') + '">' + (STATUS_LABELS[l.status]||l.status) + '</span></td><td class="p-3 text-gray-500 text-xs">' + new Date(l.created_at).toLocaleDateString('en-MY',{day:'numeric',month:'short',year:'numeric'}) + '</td><td class="p-3"><span class="text-gray-400 text-sm">Read-only</span></td></tr>';
+          }).join('');
+        }
+      }
+    })();
+    
+  </script>
+</body>
+</html>
