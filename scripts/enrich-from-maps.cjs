@@ -57,6 +57,7 @@ if (!LEAD_ID) {
 function extractNameFromMapsUrl(url) {
   try {
     const u = new URL(url);
+    if (u.hostname.includes('goo.gl')) return null; // short URL, can't extract
     const parts = u.pathname.split('/');
     const placeIdx = parts.findIndex(p => p === 'place');
     if (placeIdx !== -1 && parts[placeIdx + 1]) {
@@ -64,6 +65,25 @@ function extractNameFromMapsUrl(url) {
     }
   } catch {}
   return null;
+}
+
+// ─── Follow redirect for shortened URLs ───
+async function resolveShortUrl(url) {
+  if (!url.includes('goo.gl') && !url.includes('maps.app.goo')) return url;
+  console.error(`🌐 Resolving shortened URL: ${url}`);
+  const browser = await chromium.launch({ headless: true, args: ['--no-sandbox'] });
+  try {
+    const page = await (await browser.newContext()).newPage();
+    const response = await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 20000 });
+    const resolved = response?.url() || url;
+    console.error(`✅ Resolved to: ${resolved}`);
+    return resolved;
+  } catch (err) {
+    console.error(`⚠️ Redirect follow failed: ${err.message}`);
+    return url;
+  } finally {
+    await browser.close().catch(() => {});
+  }
 }
 
 // ─── Google Maps Scraper (Playwright) ───
@@ -229,12 +249,17 @@ async function main() {
 
   console.error(`📋 Lead: ${lead.business_name}`);
 
-  // Step 1: Try Playwright first, fallback to Places API
-  let gbpData = await scrapeGoogleMaps(lead.google_maps_url);
+  // Step 1: Resolve shortened URLs then scrape
+  const resolvedUrl = await resolveShortUrl(lead.google_maps_url);
+  if (resolvedUrl !== lead.google_maps_url) {
+    // Update the lead with the resolved full URL
+    await supabase.from('leads').update({ google_maps_url: resolvedUrl }).eq('id', LEAD_ID);
+  }
+  let gbpData = await scrapeGoogleMaps(resolvedUrl);
 
   if (!gbpData || (!gbpData.business_name && !gbpData.gbp_rating)) {
     console.error('⚠️ Playwright returned limited data, trying Places API...');
-    gbpData = await searchPlacesApi(lead.business_name, lead.google_maps_url);
+    gbpData = await searchPlacesApi(lead.business_name, resolvedUrl);
   }
 
   if (!gbpData) {

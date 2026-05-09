@@ -22,6 +22,8 @@ export default function NewLeadPage() {
   function extractNameFromUrl(url: string): string | null {
     try {
       const u = new URL(url)
+      // Shortened goo.gl or maps.app.goo.gl — can't extract name
+      if (u.hostname.includes('goo.gl')) return null
       // Typical: /maps/place/Business+Name/@lat,lng or /place/Business+Name/
       const parts = u.pathname.split('/')
       const placeIdx = parts.findIndex(p => p === 'place')
@@ -44,8 +46,8 @@ export default function NewLeadPage() {
     }
 
     // Validate it looks like a Google Maps URL
-    if (!url.match(/google\.[a-z.]+\/maps/i)) {
-      setError('That doesn\'t look like a Google Maps URL. Make sure it starts with https://maps.google.com/... or https://www.google.com/maps/...')
+    if (!url.match(/google\.[a-z.]+\/maps/i) && !url.match(/goo\.gl\/maps/i) && !url.match(/maps\.app\.goo\.gl/i)) {
+      setError('That doesn\'t look like a Google Maps URL. Paste a link from Google Maps (maps.google.com, maps.app.goo.gl, or goo.gl/maps/...)')
       return
     }
 
