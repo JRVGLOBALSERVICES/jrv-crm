@@ -28,21 +28,37 @@ function extractPrompts(raw: any) {
   else if (raw.prompts) { source = raw.prompts; research = raw.research_summary || raw.research }
   else if (raw.prompt) source = raw.prompt
   else if (raw.stitch_prompts && typeof raw.stitch_prompts === 'object') {
-    // Handle { stitch_prompts: { tier1_stage1_credibility: '...', ... }, claude_prompts: { ... } } format
+    // Handle { stitch_prompts: { tier1_stage1_credibility: {...}, ... }, claude_prompts: { ... } } format
+    const flattenPrompt = (obj: any): string => {
+      if (!obj || typeof obj === 'string') return obj || '';
+      if (obj.prompt) return obj.prompt;
+      if (obj.content) return obj.content;
+      if (obj.text) return obj.text;
+      // Flatten structured object to markdown
+      const lines: string[] = [];
+      for (const [key, val] of Object.entries(obj)) {
+        const heading = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        if (typeof val === 'string') {
+          lines.push(`## ${heading}\n${val}\n`);
+        } else if (typeof val === 'object' && val !== null) {
+          lines.push(`## ${heading}`);
+          for (const [sk, sv] of Object.entries(val)) {
+            const sub = sk.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            lines.push(`**${sub}:** ${typeof sv === 'string' ? sv : JSON.stringify(sv)}`);
+          }
+          lines.push('');
+        }
+      }
+      return lines.join('\n');
+    };
     for (const key of Object.keys(raw.stitch_prompts)) {
       for (const tier of ['tier1', 'tier2', 'tier3']) {
-        if (key.startsWith(tier)) {
-          const val = raw.stitch_prompts[key];
-          out[tier].stitch = typeof val === 'string' ? val : (val?.prompt || val?.content || JSON.stringify(val));
-        }
+        if (key.startsWith(tier)) out[tier].stitch = flattenPrompt(raw.stitch_prompts[key]);
       }
     }
     for (const key of Object.keys(raw.claude_prompts || {})) {
       for (const tier of ['tier1', 'tier2', 'tier3']) {
-        if (key.startsWith(tier)) {
-          const val = raw.claude_prompts[key];
-          out[tier].claude = typeof val === 'string' ? val : (val?.prompt || val?.content || JSON.stringify(val));
-        }
+        if (key.startsWith(tier)) out[tier].claude = flattenPrompt(raw.claude_prompts[key]);
       }
     }
     source = out;
@@ -51,13 +67,30 @@ function extractPrompts(raw: any) {
 
   if (!source) return { data: out, research: raw.research_summary || raw.research || null }
 
-  // Get text from an entry (handles string, {content}, {prompt}, {text} etc.)
+  // Get text from an entry (handles string, {content}, {prompt}, {text}, structured object)
   const getText = (entry: any): string => {
     if (!entry) return ''
     if (typeof entry === 'string') return entry
     if (typeof entry.content === 'string') return entry.content
     if (typeof entry.prompt === 'string') return entry.prompt
     if (typeof entry.text === 'string') return entry.text
+    if (typeof entry === 'object') {
+      // Try flattening as markdown
+      const lines: string[] = [];
+      for (const [key, val] of Object.entries(entry)) {
+        const heading = key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+        if (typeof val === 'string') lines.push('## ' + heading + '\n' + val + '\n');
+        else if (typeof val === 'object' && val !== null) {
+          lines.push('## ' + heading);
+          for (const [sk, sv] of Object.entries(val)) {
+            const sub = sk.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
+            lines.push('**' + sub + ':** ' + (typeof sv === 'string' ? sv : JSON.stringify(sv)));
+          }
+          lines.push('');
+        }
+      }
+      return lines.join('\n');
+    }
     return JSON.stringify(entry)
   }
 
