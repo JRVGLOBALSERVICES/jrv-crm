@@ -23,10 +23,19 @@ function extractPrompts(raw: any) {
   let source: any = null
   let research: any = null
 
-  // Determine source — could be raw itself, raw.prompts, or raw.prompt
+  // Determine source — could be raw itself, raw.prompts, raw.prompt, or stitch_prompts/claude_prompts
   if (raw.tier1 || raw.tier_1) source = raw
   else if (raw.prompts) { source = raw.prompts; research = raw.research_summary || raw.research }
   else if (raw.prompt) source = raw.prompt
+  else if (raw.stitch_prompts && typeof raw.stitch_prompts === 'object') {
+    // Handle { stitch_prompts: { tier1: '...', ... }, claude_prompts: { tier1: '...', ... } } format
+    for (const tier of ['tier1', 'tier2', 'tier3']) {
+      if (raw.stitch_prompts[tier]) out[tier].stitch = raw.stitch_prompts[tier];
+      if (raw.claude_prompts?.[tier]) out[tier].claude = raw.claude_prompts[tier];
+    }
+    source = out;
+    research = raw.research_summary || raw.research || null;
+  }
 
   if (!source) return { data: out, research: raw.research_summary || raw.research || null }
 
