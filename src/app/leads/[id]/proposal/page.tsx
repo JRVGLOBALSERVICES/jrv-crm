@@ -28,10 +28,22 @@ function extractPrompts(raw: any) {
   else if (raw.prompts) { source = raw.prompts; research = raw.research_summary || raw.research }
   else if (raw.prompt) source = raw.prompt
   else if (raw.stitch_prompts && typeof raw.stitch_prompts === 'object') {
-    // Handle { stitch_prompts: { tier1: '...', ... }, claude_prompts: { tier1: '...', ... } } format
-    for (const tier of ['tier1', 'tier2', 'tier3']) {
-      if (raw.stitch_prompts[tier]) out[tier].stitch = raw.stitch_prompts[tier];
-      if (raw.claude_prompts?.[tier]) out[tier].claude = raw.claude_prompts[tier];
+    // Handle { stitch_prompts: { tier1_stage1_credibility: '...', ... }, claude_prompts: { ... } } format
+    for (const key of Object.keys(raw.stitch_prompts)) {
+      for (const tier of ['tier1', 'tier2', 'tier3']) {
+        if (key.startsWith(tier)) {
+          const val = raw.stitch_prompts[key];
+          out[tier].stitch = typeof val === 'string' ? val : (val?.prompt || val?.content || JSON.stringify(val));
+        }
+      }
+    }
+    for (const key of Object.keys(raw.claude_prompts || {})) {
+      for (const tier of ['tier1', 'tier2', 'tier3']) {
+        if (key.startsWith(tier)) {
+          const val = raw.claude_prompts[key];
+          out[tier].claude = typeof val === 'string' ? val : (val?.prompt || val?.content || JSON.stringify(val));
+        }
+      }
     }
     source = out;
     research = raw.research_summary || raw.research || null;
