@@ -53,9 +53,30 @@ export async function GET(request: NextRequest) {
 export async function POST(request: Request) {
   try {
     const body = await request.json()
+    const name = body.business_name?.trim()
+    if (!name) return NextResponse.json({ error: 'Business name required' }, { status: 400 })
+
+    // Check for duplicates by name (case-insensitive) or maps URL
+    const { data: dupes } = await supabase
+      .from('leads')
+      .select('id, business_name, google_maps_url')
+      .limit(50)
+
+    if (dupes) {
+      const nameLower = name.toLowerCase()
+      const mapsUrl = body.google_maps_url || ''
+      for (const d of dupes) {
+        if (d.business_name?.toLowerCase() === nameLower) {
+          return NextResponse.json({ error: 'duplicate', existing_id: d.id, existing_name: d.business_name, message: `"${name}" already exists` }, { status: 409 })
+        }
+        if (mapsUrl && d.google_maps_url && d.google_maps_url === mapsUrl) {
+          return NextResponse.json({ error: 'duplicate', existing_id: d.id, existing_name: d.business_name, message: 'This Maps URL already exists' }, { status: 409 })
+        }
+      }
+    }
 
     const newLead = {
-      business_name: body.business_name,
+      business_name: name,
       sector: body.sector || null,
       rating: body.rating || null,
       review_count: body.review_count || null,
