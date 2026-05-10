@@ -72,14 +72,20 @@ function resolveShortUrl(url) {
     const out = execFileSync(OBSCURA, ['fetch', url, '--eval', 'window.location.href', '--wait-until', 'domcontentloaded', '--timeout', '10'], {
       encoding: 'utf-8', timeout: 15000, stdio: ['ignore', 'pipe', 'pipe']
     });
-    // Obscura output: JSON with eval result containing the final URL
-    const lines = out.split('\n').filter(l => l.startsWith('{'));
+    // Obscura outputs the resolved URL as the eval result on stdout
+    const lines = out.split('\n').map(l => l.trim()).filter(Boolean);
+    // Try parsing as JSON first (Obscura may output {eval: 'url'} format)
     for (const line of lines) {
+      if (line.startsWith('http')) {
+        console.error(`✅ Resolved to: ${line}`);
+        return line;
+      }
       try {
         const parsed = JSON.parse(line);
-        if (parsed.url) {
-          console.error(`✅ Resolved to: ${parsed.url}`);
-          return parsed.url;
+        const found = parsed.url || parsed.eval;
+        if (found && found.startsWith('http')) {
+          console.error(`✅ Resolved to: ${found}`);
+          return found;
         }
       } catch {}
     }
@@ -229,8 +235,14 @@ async function main() {
     await supabase.from('leads').update({ google_maps_url: resolvedUrl }).eq('id', LEAD_ID);
   }
 
-  // Try Places API (reliable, always works)
-  let gbpData = await searchPlacesApi(lead.business_name, resolvedUrl);
+  // Extract name from resolved URL (more accurate than lead's garbled name)
+  const urlName = extractNameFromMapsUrl(resolvedUrl) || lead.business_name;
+  if (urlName !== lead.business_name) {
+    console.error(`📌 URL suggests name: "${urlName}" (was "${lead.business_name}")`);
+  }
+
+  // Try Places API (reliable, always works) with the name from the URL
+  let gbpData = await searchPlacesApi(urlName, resolvedUrl);
 
   // Fallback: try Obscura on Maps page
   if (!gbpData) {
@@ -262,7 +274,8 @@ async function main() {
 
   // Build updates
   const updates = { updated_at: new Date().toISOString() };
-  if (gbpData.business_name && lead.business_name === 'New Lead') updates.business_name = gbpData.business_name;
+  // Always update business_name from Places API (more reliable than URL parsing)
+  if (gbpData.business_name && gbpData.business_name !== lead.business_name) updates.business_name = gbpData.business_name;
   if (gbpData.gbp_rating !== null) updates.gbp_rating = gbpData.gbp_rating;
   if (gbpData.gbp_review_count !== null) updates.gbp_review_count = gbpData.gbp_review_count;
   if (gbpData.address) updates.address = gbpData.address;
