@@ -11,8 +11,26 @@
  * Output: JSON with visual findings about the business.
  */
 
-const GEMINI_KEY = 'AIzaSyAXEoanwbkYrmlw7tbXy1b6GoNr-sv2WpM';
-const PLACES_KEY = 'AIzaSyBFcHYlDBMHdtr3RmiUmp8AvPhAlGLjpJI';
+// Read API keys from .env.json
+import { readFileSync, existsSync } from 'fs';
+import { join, dirname } from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+const ENV_PATH = join(__dirname, '..', '..', '.env.json');
+let GEMINI_KEY = '';
+let PLACES_KEY = '';
+
+if (existsSync(ENV_PATH)) {
+  const env = JSON.parse(readFileSync(ENV_PATH, 'utf-8'));
+  GEMINI_KEY = env.gemini || '';
+  PLACES_KEY = env.google_places || '';
+}
+
+if (!GEMINI_KEY || !PLACES_KEY) {
+  console.error('Missing API keys in .env.json. Need: gemini, google_places');
+  process.exit(1);
+}
 
 const businessName = process.argv[2];
 const sector = process.argv[3] || '';

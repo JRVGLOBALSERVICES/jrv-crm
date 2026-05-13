@@ -119,18 +119,87 @@ async function searchPlacesApi(businessName, mapsUrl) {
     console.error(`✅ [Places API] Found: ${place.displayName?.text || query}`);
 
     const typeMap = {
-      restaurant: 'F&B/Restaurants', hotel: 'Hotels/Accommodation',
-      car_repair: 'Automotive/Workshops', dentist: 'Healthcare/Clinics/Dental',
-      doctor: 'Healthcare/Clinics/Dental', clinic: 'Healthcare/Clinics/Dental',
+      // F&B/Restaurants
+      restaurant: 'F&B/Restaurants', breakfast_restaurant: 'F&B/Restaurants',
+      cafe: 'Cafe/Kopitiam', bakery: 'Bakery/Confectionery',
+      meal_takeaway: 'F&B/Restaurants', meal_delivery: 'F&B/Restaurants',
+      bar: 'F&B/Restaurants', night_club: 'F&B/Restaurants',
+      liquor_store: 'Retail/Fashion', supermarket: 'Retail/Fashion',
+      convenience_store: 'Retail/Fashion',
+      // Hotels/Accommodation
+      hotel: 'Hotels/Accommodation', lodging: 'Hotels/Accommodation',
+      campground: 'Hotels/Accommodation', rv_park: 'Hotels/Accommodation',
+      // Automotive
+      car_repair: 'Automotive/Workshops', car_wash: 'Car Wash/Detailing',
+      car_dealer: 'Automotive/Workshops', car_rental: 'Automotive/Workshops',
+      gas_station: 'Automotive/Workshops', parking: 'Automotive/Workshops',
+      taxi_stand: 'Automotive/Workshops',
+      // Healthcare
+      dentist: 'Healthcare/Clinics/Dental', doctor: 'Healthcare/Clinics/Dental',
+      clinic: 'Healthcare/Clinics/Dental', medical_clinic: 'Healthcare/Clinics/Dental',
+      hospital: 'Healthcare/Clinics/Dental', pharmacy: 'Pharmacy',
+      physiotherapist: 'Physiotherapy', drugstore: 'Pharmacy',
+      // Education
       school: 'Education/Training', university: 'Education/Training',
-      real_estate_agency: 'Real Estate/Agencies', beauty_salon: 'Beauty/Salons/Spa',
-      spa: 'Beauty/Salons/Spa', gym: 'Fitness/Gyms',
+      primary_school: 'Education/Training', secondary_school: 'Education/Training',
+      library: 'Education/Training',
+      // Real Estate
+      real_estate_agency: 'Real Estate/Agencies',
+      // Beauty/Salon/Spa
+      beauty_salon: 'Beauty/Salons/Spa', spa: 'Beauty/Salons/Spa',
+      hair_care: 'Beauty/Salons/Spa',
+      // Fitness
+      gym: 'Fitness/Gyms', stadium: 'Fitness/Gyms',
+      // Retail/Fashion
       store: 'Retail/Fashion', shopping_mall: 'Retail/Fashion',
-      lawyer: 'Legal/Law Firms', accountant: 'Financial Services',
-      travel_agency: 'Travel Agencies', pet_store: 'Pet Services/Grooming',
-      photographer: 'Photography/Studio', hair_care: 'Beauty/Salons/Spa',
+      clothing_store: 'Retail/Fashion', shoe_store: 'Retail/Fashion',
+      jewelry_store: 'Retail/Fashion', department_store: 'Retail/Fashion',
+      home_goods_store: 'Home Services/Renovation', furniture_store: 'Furniture/Home',
+      hardware_store: 'Hardware Store', bicycle_store: 'Retail/Fashion',
+      book_store: 'Retail/Fashion', electronics_store: 'Electronics/IT',
+      florist: 'Florist',
+      // Legal
+      lawyer: 'Legal/Law Firms', courthouse: 'Legal/Law Firms',
+      // Financial
+      accountant: 'Financial Services', finance: 'Financial Services',
+      bank: 'Financial Services', atm: 'Financial Services',
+      insurance_agency: 'Financial Services',
+      // Travel
+      travel_agency: 'Travel Agencies', airport: 'Travel Agencies',
+      bus_station: 'Transportation', train_station: 'Transportation',
+      transit_station: 'Transportation', subway_station: 'Transportation',
+      tourist_attraction: 'Travel & Hospitality',
+      // Pet
+      pet_store: 'Pet Services/Grooming', veterinary_care: 'Vet Clinic',
+      // Photography/Studio
+      photographer: 'Photography/Studio', art_gallery: 'Photography/Studio',
+      museum: 'Entertainment', movie_theater: 'Entertainment',
+      amusement_park: 'Entertainment', aquarium: 'Entertainment',
+      casino: 'Entertainment', zoo: 'Entertainment',
+      bowling_alley: 'Escape Room/Bowling',
+      // Home Services
       moving_company: 'Home Services/Renovation', electrician: 'Home Services/Renovation',
-      plumber: 'Home Services/Renovation',
+      plumber: 'Home Services/Renovation', painter: 'Home Services/Renovation',
+      roofing_contractor: 'Home Services/Renovation', locksmith: 'Home Services/Renovation',
+      storage: 'Home Services/Renovation', laundry: 'Laundry/Dry Clean',
+      funeral_home: 'Services', cemetery: 'Services',
+      local_government_office: 'Professional Services',
+      embassy: 'Professional Services', city_hall: 'Professional Services',
+      police: 'Services', fire_station: 'Services',
+      post_office: 'Professional Services',
+      // Electronics/IT
+      computer_repair: 'Electronics/IT',
+      // Construction
+      construction_company: 'Construction/Materials',
+      // Services
+      travel_agency: 'Travel Agencies',
+      // Places of worship
+      church: 'Services', mosque: 'Services',
+      hindu_temple: 'Services', synagogue: 'Services',
+      // Parks/Nature
+      park: 'Services', campground: 'Hotels/Accommodation',
+      // Business services
+      accounting: 'Financial Services',
     };
     let sector = null;
     for (const t of place.types || []) { if (typeMap[t]) { sector = typeMap[t]; break; } }
