@@ -154,8 +154,8 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
     // notes is plain text, not JSON
   }
   
-  // Determine effective social media links
-  const effectiveSocial = (lead.social_media && lead.social_media.length > 0) ? lead.social_media : socialFallback
+  // Social media: DATABASE ONLY. No fallback to notes parsing.
+  const effectiveSocial = (lead.social_media && Array.isArray(lead.social_media) && lead.social_media.length > 0) ? lead.social_media : []
 
   const competitors = lead.competitors || (parsedNotes?.competitors as Record<string, any>[] | null) || null
   const frictionReviews = lead.friction_reviews || (parsedNotes?.friction_reviews as Record<string, any>[] | null) || null
