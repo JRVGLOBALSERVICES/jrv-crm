@@ -3,7 +3,7 @@
 import { useRouter } from 'next/navigation'
 import { useState, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { Lead, STATUS_LABELS, STATUS_COLORS, LeadStatus } from '@/lib/types'
+import { Lead, STATUS_LABELS, STATUS_COLORS, LeadStatus, SocialMediaLink, extractSocialMedia } from '@/lib/types'
 
 const sectionVariants = {
   hidden: { opacity: 0, y: 16 },
@@ -137,15 +137,25 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
   // Parse notes for enrichment data
   let enrichmentData: Record<string, any> | null = null
   let parsedNotes: Record<string, any> | null = null
+  let socialFallback: SocialMediaLink[] = []
   try {
     const parsed = JSON.parse(lead.notes || '{}')
     parsedNotes = parsed
     if (parsed.market_intel || parsed.digital_audit || parsed.tech_scope || parsed.pitch_deck) {
       enrichmentData = parsed
     }
+    // Try to get social media from notes if not in lead.social_media
+    if (parsed.social_media && Array.isArray(parsed.social_media)) {
+      socialFallback = parsed.social_media
+    } else if (parsed.full_dossier) {
+      socialFallback = extractSocialMedia(parsed.full_dossier)
+    }
   } catch {
     // notes is plain text, not JSON
   }
+  
+  // Determine effective social media links
+  const effectiveSocial = (lead.social_media && lead.social_media.length > 0) ? lead.social_media : socialFallback
 
   const competitors = lead.competitors || (parsedNotes?.competitors as Record<string, any>[] | null) || null
   const frictionReviews = lead.friction_reviews || (parsedNotes?.friction_reviews as Record<string, any>[] | null) || null
@@ -330,9 +340,9 @@ export default function LeadDetailPage({ params }: { params: { id: string } }) {
             )}
           </InfoRow>
           <InfoRow label="Social Media">
-            {lead.social_media && lead.social_media.length > 0 ? (
+            {effectiveSocial && effectiveSocial.length > 0 ? (
               <div className="flex flex-wrap gap-1.5">
-                {lead.social_media.map((sm, i) => (
+                {effectiveSocial.map((sm, i) => (
                   <a
                     key={i}
                     href={sm.url}
