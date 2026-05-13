@@ -24,7 +24,8 @@ CREATE TABLE IF NOT EXISTS leads (
   replied_at timestamptz,
   pitched_at timestamptz,
   closed_at timestamptz,
-  assigned_to text DEFAULT 'Vir'
+  assigned_to text DEFAULT 'Vir',
+  social_media jsonb DEFAULT '[]'::jsonb
 );
 
 -- Enable Row Level Security
@@ -49,3 +50,6 @@ CREATE TRIGGER update_leads_updated_at
   BEFORE UPDATE ON leads
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
+
+-- Add social_media column (safe for existing tables)
+ALTER TABLE leads ADD COLUMN IF NOT EXISTS social_media jsonb DEFAULT '[]'::jsonb;

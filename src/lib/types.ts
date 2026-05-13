@@ -1,5 +1,11 @@
 export type LeadStatus = 'new' | 'contacted' | 'replied' | 'pitched' | 'closed' | 'lost'
 
+export type SocialMediaLink = {
+  platform: string  // 'instagram' | 'facebook' | 'tiktok' | 'twitter' | 'youtube' | 'linkedin' | 'other'
+  url: string
+  label?: string
+}
+
 export type Lead = {
   id: string
   created_at: string
@@ -25,6 +31,7 @@ export type Lead = {
   gbp_review_count: number | null
   is_zero_state: boolean | null
   website_url: string | null
+  social_media: SocialMediaLink[] | null
   competitors: Record<string, any>[] | null
   friction_reviews: Record<string, any>[] | null
   address: string | null

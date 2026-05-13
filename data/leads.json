@@ -7,18 +7,19 @@
     "sector": "F&B (South Indian / Banana Leaf)",
     "rating": "4.0 Stars",
     "review_count": 759,
-    "current_web_presence": "No website \u2014 only Google Maps listing and word of mouth",
+    "current_web_presence": "No website — only Google Maps listing and word of mouth",
     "why_they_need_website": "759 reviews showing massive demand. No online menu, no delivery ordering, no branding. Losing customers to competitors with proper web presence.",
     "recommended_domain": "bigreenleaf.com.my",
     "google_maps_url": "https://maps.google.com/?cid=bigreenleaf",
     "phone": null,
     "status": "new",
-    "notes": "Verified 759 reviews on Google Maps. No website button visible in Google profile. Heavy F&B traffic sector \u2014 customers check menu online before visiting.",
+    "notes": "Verified 759 reviews on Google Maps. No website button visible in Google profile. Heavy F&B traffic sector — customers check menu online before visiting.",
     "contacted_at": null,
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000002",
@@ -28,18 +29,19 @@
     "sector": "F&B (Hainanese Coffee Shop)",
     "rating": "4.1 Stars",
     "review_count": 322,
-    "current_web_presence": "No website \u2014 Facebook page exists but no dedicated site",
+    "current_web_presence": "No website — Facebook page exists but no dedicated site",
     "why_they_need_website": "322 reviews with no home page. Heritage brand needs digital preservation. Tourists and locals search for Hainanese coffee online.",
     "recommended_domain": "kedaikopihainan.com.my",
     "google_maps_url": "https://maps.google.com/?cid=kedaikopihainan",
     "phone": null,
     "status": "new",
-    "notes": "322 Google reviews. Cultural/heritage F&B \u2014 strong draw for tourists and foodies. No website despite being a landmark in Seremban.",
+    "notes": "322 Google reviews. Cultural/heritage F&B — strong draw for tourists and foodies. No website despite being a landmark in Seremban.",
     "contacted_at": null,
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000003",
@@ -49,18 +51,19 @@
     "sector": "F&B (Laksa / Hawker Specialty)",
     "rating": "4.5 Stars",
     "review_count": 250,
-    "current_web_presence": "Zero digital footprint \u2014 no website, no social media, no delivery platforms",
+    "current_web_presence": "Zero digital footprint — no website, no social media, no delivery platforms",
     "why_they_need_website": "Zero online presence despite 250+ reviews. Hawker-to-web pipeline can turn a local gem into a destination. Online ordering alone would capture untapped revenue.",
     "recommended_domain": "kowkeelaksa.com.my",
     "google_maps_url": "https://maps.google.com/?cid=kowkeelaksa",
     "phone": null,
     "status": "new",
-    "notes": "Approx 250 reviews. Complete digital void \u2014 no website, no Facebook, no delivery. Classic case of a quality product invisible online.",
+    "notes": "Approx 250 reviews. Complete digital void — no website, no Facebook, no delivery. Classic case of a quality product invisible online.",
     "contacted_at": null,
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000004",
@@ -70,7 +73,7 @@
     "sector": "F&B (Satay Stall)",
     "rating": "4.3 Stars",
     "review_count": 200,
-    "current_web_presence": "Foodpanda only \u2014 no own website or direct ordering channel",
+    "current_web_presence": "Foodpanda only — no own website or direct ordering channel",
     "why_they_need_website": "Relies entirely on Foodpanda for digital orders (30% commission). Own website with direct ordering = higher margins and customer ownership.",
     "recommended_domain": "onnkeesatay.com.my",
     "google_maps_url": "https://maps.google.com/?cid=onnkeesatay",
@@ -81,7 +84,8 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000005",
@@ -91,18 +95,19 @@
     "sector": "F&B (Chinese Seafood)",
     "rating": "4.2 Stars",
     "review_count": 481,
-    "current_web_presence": "No website \u2014 no online presence beyond Google Maps",
+    "current_web_presence": "No website — no online presence beyond Google Maps",
     "why_they_need_website": "481 reviews = huge loyal base. No website means no reservation system, no event booking, no menu showcase. Losing corporate event bookings.",
     "recommended_domain": "sinyitsing.com.my",
     "google_maps_url": "https://maps.google.com/?cid=sinyitsing",
     "phone": null,
     "status": "new",
-    "notes": "481 Google reviews. Chinese seafood \u2014 a high-ticket F&B category perfect for event/corporate bookings through a website.",
+    "notes": "481 Google reviews. Chinese seafood — a high-ticket F&B category perfect for event/corporate bookings through a website.",
     "contacted_at": null,
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000006",
@@ -112,7 +117,7 @@
     "sector": "F&B (Coffee Shop / Kopitiam)",
     "rating": "4.8 Stars",
     "review_count": 500,
-    "current_web_presence": "Facebook + delivery platforms only \u2014 no proper website",
+    "current_web_presence": "Facebook + delivery platforms only — no proper website",
     "why_they_need_website": "500+ reviews with 4.8 stars = Seremban legend. No website means no brand hub, no catering inquiries, no online merchandise. Brand dilution.",
     "recommended_domain": "hinloongcoffee.com.my",
     "google_maps_url": "https://maps.google.com/?cid=hinloong",
@@ -123,7 +128,8 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000007",
@@ -133,8 +139,8 @@
     "sector": "F&B / Retail (Traditional Bakery)",
     "rating": "4.3 Stars",
     "review_count": 150,
-    "current_web_presence": "Facebook only \u2014 no e-commerce or online catalog",
-    "why_they_need_website": "Traditional bakery with 150+ reviews. Perfect for e-commerce \u2014 cookies, biscuits, gift boxes shipped nationwide. No online store = leaving money on table.",
+    "current_web_presence": "Facebook only — no e-commerce or online catalog",
+    "why_they_need_website": "Traditional bakery with 150+ reviews. Perfect for e-commerce — cookies, biscuits, gift boxes shipped nationwide. No online store = leaving money on table.",
     "recommended_domain": "wahtung.com.my",
     "google_maps_url": "https://maps.google.com/?cid=wahtung",
     "phone": null,
@@ -144,7 +150,8 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000008",
@@ -154,18 +161,19 @@
     "sector": "Auto Services (Car Detailing & Workshop)",
     "rating": "4.4 Stars",
     "review_count": 180,
-    "current_web_presence": "Phone-only \u2014 no website, no online booking, no social media presence",
+    "current_web_presence": "Phone-only — no website, no online booking, no social media presence",
     "why_they_need_website": "180 reviews with phone-only contact. Car detailing customers search online for pricing, portfolio (before/after photos), and booking. No website = invisible to new car owners.",
     "recommended_domain": "csbrothersauto.com.my",
     "google_maps_url": "https://maps.google.com/?cid=csbrothers",
     "phone": null,
     "status": "new",
-    "notes": "~180 reviews. Auto detailing \u2014 high-ticket service. Customers need to see portfolio photos and pricing before booking. No website = lost leads.",
+    "notes": "~180 reviews. Auto detailing — high-ticket service. Customers need to see portfolio photos and pricing before booking. No website = lost leads.",
     "contacted_at": null,
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "00000000-0000-0000-0000-000000000009",
@@ -175,8 +183,8 @@
     "sector": "Health & Beauty (Barbershop)",
     "rating": "5.0 Stars",
     "review_count": 254,
-    "current_web_presence": "Booking platforms only \u2014 Fresha/Booksy but no own-brand website",
-    "why_they_need_website": "254 reviews at PERFECT 5.0 \u2014 peak reputation. Relies on third-party booking platforms (paying commissions). Own site with direct booking = brand control + higher margin.",
+    "current_web_presence": "Booking platforms only — Fresha/Booksy but no own-brand website",
+    "why_they_need_website": "254 reviews at PERFECT 5.0 — peak reputation. Relies on third-party booking platforms (paying commissions). Own site with direct booking = brand control + higher margin.",
     "recommended_domain": "underratedbarbershop.com.my",
     "google_maps_url": "https://maps.google.com/?cid=underratedbarbershop",
     "phone": null,
@@ -186,7 +194,14 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": [
+      {
+        "platform": "instagram",
+        "url": "https://www.instagram.com/theunderratedbarbershop/",
+        "label": "Instagram"
+      }
+    ]
   },
   {
     "id": "00000000-0000-0000-0000-000000000010",
@@ -196,7 +211,7 @@
     "sector": "Retail (Pet Shop & Grooming)",
     "rating": "5.0 Stars",
     "review_count": 170,
-    "current_web_presence": "Social media only \u2014 Instagram/Facebook but no e-commerce website",
+    "current_web_presence": "Social media only — Instagram/Facebook but no e-commerce website",
     "why_they_need_website": "170 reviews at 5.0 stars. Pet owners actively search for grooming booking and pet product e-commerce. No website = zero online revenue from a booming pet economy.",
     "recommended_domain": "pettoeki.com.my",
     "google_maps_url": "https://maps.google.com/?cid=pettoeki",
@@ -207,7 +222,14 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": [
+      {
+        "platform": "facebook",
+        "url": "https://www.facebook.com/pettoeki",
+        "label": "Facebook"
+      }
+    ]
   },
   {
     "id": "8af729c5-afe9-477a-a23e-81affadc7b43",
@@ -228,7 +250,8 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   },
   {
     "id": "1bc49d0d-9ee7-47fc-a1c0-b4f0071fc09d",
@@ -249,6 +272,7 @@
     "replied_at": null,
     "pitched_at": null,
     "closed_at": null,
-    "assigned_to": "Vir"
+    "assigned_to": "Vir",
+    "social_media": null
   }
 ]
