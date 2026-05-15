@@ -98,14 +98,14 @@ function extractPrompts(raw: any) {
     const full = 'tier_' + short.slice(4) // tier_1, tier_2, tier_3
     const tierData = source[short] || source[full]
     if (tierData) {
-      out[short].stitch = getText(tierData.stitch)
-      out[short].claude = getText(tierData.claude)
+      out[short].stitch = getText(tierData.stitch) || getText(tierData.stitch_prompt)
+      out[short].claude = getText(tierData.claude) || getText(tierData.claude_prompt)
     }
 
     // Also check flat keys like tier1_stitch/tier_1_stitch
     for (const prefix of [short, full]) {
-      const s = source[prefix + '_stitch']
-      const c = source[prefix + '_claude']
+      const s = source[prefix + '_stitch'] || source['stitch_' + prefix]
+      const c = source[prefix + '_claude'] || source['claude_' + prefix]
       if (s) out[short].stitch = getText(s)
       if (c) out[short].claude = getText(c)
     }
