@@ -42,6 +42,12 @@ export default async function RootLayout({
                       Dashboard
                     </a>
                     <a
+                      href="/logs"
+                      className="text-sm text-neutral-400 hover:text-orange-400 jrv-transition px-3 py-2 rounded-lg hover:bg-neutral-800 font-medium hidden sm:inline-block"
+                    >
+                      Logs
+                    </a>
+                    <a
                       href="/leads/new"
                       className="bg-orange-600 hover:bg-orange-700 text-white px-3 sm:px-4 py-2 rounded-lg text-xs sm:text-sm font-medium jrv-transition press-feedback"
                     >
