@@ -53,3 +53,40 @@ CREATE TRIGGER update_leads_updated_at
 
 -- Add social_media column (safe for existing tables)
 ALTER TABLE leads ADD COLUMN IF NOT EXISTS social_media jsonb DEFAULT '[]'::jsonb;
+
+-- ──────────────────────────────────────────
+-- AUDIT LOGS TABLE (Added May 25, 2026)
+-- Logs every action made in the CRM
+-- ──────────────────────────────────────────
+
+CREATE TABLE IF NOT EXISTS lead_crm_audit_logs (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  user_id TEXT,
+  user_email TEXT,
+  action TEXT NOT NULL,
+  entity_type TEXT NOT NULL,
+  entity_id TEXT,
+  details JSONB,
+  ip_address TEXT
+);
+
+CREATE INDEX IF NOT EXISTS idx_lcal_created_at ON public.lead_crm_audit_logs(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_lcal_user_email ON public.lead_crm_audit_logs(user_email);
+CREATE INDEX IF NOT EXISTS idx_lcal_action ON public.lead_crm_audit_logs(action);
+CREATE INDEX IF NOT EXISTS idx_lcal_entity ON public.lead_crm_audit_logs(entity_type, entity_id);
+
+ALTER TABLE public.lead_crm_audit_logs ENABLE ROW LEVEL SECURITY;
+
+-- (IF NOT EXISTS not supported for policies — use DROP first)
+DROP POLICY IF EXISTS service_role_all ON public.lead_crm_audit_logs;
+CREATE POLICY service_role_all ON public.lead_crm_audit_logs
+  FOR ALL TO service_role USING (true);
+
+DROP POLICY IF EXISTS authenticated_insert ON public.lead_crm_audit_logs;
+CREATE POLICY authenticated_insert ON public.lead_crm_audit_logs
+  FOR INSERT TO authenticated WITH CHECK (true);
+
+DROP POLICY IF EXISTS authenticated_select ON public.lead_crm_audit_logs;
+CREATE POLICY authenticated_select ON public.lead_crm_audit_logs
+  FOR SELECT TO authenticated USING (true);

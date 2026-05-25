@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '@/lib/supabase'
+import { auditLog } from '@/lib/audit'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -39,6 +40,17 @@ export async function GET(request: NextRequest) {
   const { data: allLeads } = await supabase.from('leads').select('status')
   const counts = { new: 0, contacted: 0, replied: 0, pitched: 0, closed: 0, lost: 0 }
   ;(allLeads || []).forEach(l => { if (counts[l.status as keyof typeof counts] !== undefined) counts[l.status as keyof typeof counts]++ })
+
+  // Log search actions
+  const hasFilters = search || status || sector
+  if (hasFilters) {
+    auditLog({
+      action: 'lead.searched',
+      entityType: 'lead',
+      details: { search, status, sector, page, sort, order, totalResults: count || 0 },
+      request,
+    }).catch(() => {})
+  }
 
   return NextResponse.json({
     data: data || [],
@@ -99,6 +111,19 @@ export async function POST(request: Request) {
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 })
     }
+
+    // Log creation
+    auditLog({
+      action: 'lead.created',
+      entityType: 'lead',
+      entityId: data.id,
+      details: {
+        business_name: data.business_name,
+        sector: data.sector,
+        google_maps_url: data.google_maps_url,
+      },
+      request: request as NextRequest,
+    }).catch(() => {})
 
     return NextResponse.json(data, { status: 201 })
   } catch {
