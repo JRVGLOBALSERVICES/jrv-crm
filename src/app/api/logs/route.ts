@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { getServerClient } from '@/lib/supabase'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -8,6 +8,8 @@ export async function GET(request: NextRequest) {
   const entityType = searchParams.get('entity') || ''
   const page = Math.max(1, parseInt(searchParams.get('page') || '1'))
   const limit = Math.min(200, Math.max(1, parseInt(searchParams.get('limit') || '50')))
+
+  const supabase = getServerClient()
 
   let query = supabase
     .from('lead_crm_audit_logs')
