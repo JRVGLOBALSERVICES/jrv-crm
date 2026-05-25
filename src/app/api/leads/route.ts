@@ -68,21 +68,28 @@ export async function POST(request: Request) {
     const name = body.business_name?.trim()
     if (!name) return NextResponse.json({ error: 'Business name required' }, { status: 400 })
 
-    // Check for duplicates by name (case-insensitive) or maps URL
+    // Check for duplicates by name (case-insensitive), maps URL, or phone
     const { data: dupes } = await supabase
       .from('leads')
-      .select('id, business_name, google_maps_url')
+      .select('id, business_name, google_maps_url, phone')
       .limit(50)
 
     if (dupes) {
       const nameLower = name.toLowerCase()
       const mapsUrl = body.google_maps_url || ''
+      const phone = (body.phone || '').replace(/[^0-9]/g, '')
       for (const d of dupes) {
         if (d.business_name?.toLowerCase() === nameLower) {
           return NextResponse.json({ error: 'duplicate', existing_id: d.id, existing_name: d.business_name, message: `"${name}" already exists` }, { status: 409 })
         }
         if (mapsUrl && d.google_maps_url && d.google_maps_url === mapsUrl) {
           return NextResponse.json({ error: 'duplicate', existing_id: d.id, existing_name: d.business_name, message: 'This Maps URL already exists' }, { status: 409 })
+        }
+        if (phone && d.phone) {
+          const existingPhone = d.phone.replace(/[^0-9]/g, '')
+          if (phone === existingPhone) {
+            return NextResponse.json({ error: 'duplicate_phone', existing_id: d.id, existing_name: d.business_name, message: `Phone ${body.phone} already belongs to "${d.business_name}"` }, { status: 409 })
+          }
         }
       }
     }
